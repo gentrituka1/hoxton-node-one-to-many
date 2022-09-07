@@ -1,6 +1,6 @@
 import Database from "better-sqlite3";
 
-const db = Database('./db/db.sqlite', { verbose: console.log });
+const db = Database('./db/setup.db', { verbose: console.log });
 
 function everythingMuseum(){
     const museums = [
@@ -37,15 +37,17 @@ function everythingMuseum(){
     `)
     createMuseumsTable.run();
 
+    const deleteMuseumTable = db.prepare(`
+        DROP TABLE IF EXISTS museums;
+    `)
+    deleteMuseumTable.run()
+
     const createNewMuseum = db.prepare(`
-        INSERT INTO museums (name, city, country) VALUES (?, ?, ?);
+        INSERT INTO museums (name, city) VALUES (@name, @city);
     `)
     createNewMuseum.run()
 
-    const deleteMuseum = db.prepare(`
-        DELETE FROM museums;
-    `)
-    deleteMuseum.run()
+    
 
     const deleteSelectedMuseum = db.prepare(`
         DELETE FROM museums WHERE id = ?;
@@ -86,8 +88,60 @@ function everythingWork(){
             id: 4,
             name: "The Birth of Venus",
             artist: "Sandro Botticelli",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Botticelli_-_Birth_of_Venus_-_Google_Art_Project.jpg/800px-Botticelli_-_Birth_of_Venus_-_Google_Art_Project.jpg",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg/640px-Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg",
             museumId: 1
+        },
+        {
+            id: 5,
+            name: "The Gulf Stream",
+            artist: "Winslow Homer",
+            image: "https://thetourguy.com/wp-content/uploads/2020/03/Gulf-Stream-by-Winslow-Homer.jpeg",
+            museumId: 3
+        },
+        {
+            id: 6,
+            name: " Julie Le Brun Looking In A Mirror",
+            artist: "Elisabeth Louise Vigée Le Brun",
+            image: "https://thetourguy.com/wp-content/uploads/2020/03/Julie-Le-Brun-by-Elisabeth-Louise-Vige%CC%81e-Le-Brun.jpeg",
+            museumId: 3
         }
     ]
+
+    const createWorksTable = db.prepare(`
+        CREATE TABLE IF NOT EXISTS works (
+            id INTEGER,
+            name TEXT,
+            artist TEXT,
+            image TEXT,
+            museumId INTEGER,
+            PRIMARY KEY (id),
+            FOREIGN KEY (museumId) REFERENCES museums(id)
+        );
+    `)
+    createWorksTable.run();
+
+
+
+    const deleteWorksTable = db.prepare(`
+        DROP TABLE IF EXISTS works;
+    `)
+    deleteWorksTable.run()
+
+
+
+    const createNewWork = db.prepare(`
+        INSERT INTO works (name, artist, image, museumId) VALUES (@name, @artist, @image, @museumId);
+    `)
+    createNewWork.run()
+
+    const deleteSelectedWork = db.prepare(`
+        DELETE FROM works WHERE id = ?;
+    `)
+    deleteSelectedWork.run()
+
+    for(let work of works){
+        createNewWork.run(work.name, work.artist, work.image, work.museumId)
+    }
+
+
 }
