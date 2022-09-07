@@ -142,6 +142,6 @@ function everythingWork(){
     for(let work of works){
         createNewWork.run(work.name, work.artist, work.image, work.museumId)
     }
-
-
 }
+
+everythingWork()
