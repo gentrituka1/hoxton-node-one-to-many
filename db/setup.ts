@@ -26,28 +26,27 @@ function everythingMuseum(){
         }
     ]
 
-    const createMuseumsTable = db.prepare(`
-        CREATE TABLE IF NOT EXISTS museums (
-            id INTEGER,
-            name TEXT,
-            city TEXT,
-            country TEXT,
-            PRIMARY KEY (id)
-        );
-    `)
-    createMuseumsTable.run();
-
     const deleteMuseumTable = db.prepare(`
         DROP TABLE IF EXISTS museums;
     `)
     deleteMuseumTable.run()
 
+    const createMuseumsTable = db.prepare(`
+        CREATE TABLE IF NOT EXISTS museums (
+            id INTEGER,
+            name TEXT,
+            city TEXT,
+            PRIMARY KEY (id)
+        );
+    `)
+    createMuseumsTable.run();
+
     const createNewMuseum = db.prepare(`
-        INSERT INTO museums (name, city) VALUES (@name, @city);
+        INSERT INTO museums (id, name, city) VALUES (@id, @name, @city);
     `)
 
     for(let museum of museums){
-        createNewMuseum.run(museum.name, museum.city)
+        createNewMuseum.run(museum)
     }
 }
 
@@ -99,6 +98,11 @@ function everythingWork(){
         }
     ]
 
+    const deleteWorksTable = db.prepare(`
+        DROP TABLE IF EXISTS works;
+    `)
+    deleteWorksTable.run()
+
     const createWorksTable = db.prepare(`
         CREATE TABLE IF NOT EXISTS works (
             id INTEGER,
@@ -114,19 +118,12 @@ function everythingWork(){
 
 
 
-    const deleteWorksTable = db.prepare(`
-        DROP TABLE IF EXISTS works;
-    `)
-    deleteWorksTable.run()
-
-
-
     const createNewWork = db.prepare(`
         INSERT INTO works (name, artist, image, museumId) VALUES (@name, @artist, @image, @museumId);
     `)
 
     for(let work of works){
-        createNewWork.run(work.name, work.artist, work.image, work.museumId)
+        createNewWork.run(work)
     }
 }
 
