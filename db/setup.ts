@@ -45,14 +45,6 @@ function everythingMuseum(){
     const createNewMuseum = db.prepare(`
         INSERT INTO museums (name, city) VALUES (@name, @city);
     `)
-    createNewMuseum.run()
-
-    
-
-    const deleteSelectedMuseum = db.prepare(`
-        DELETE FROM museums WHERE id = ?;
-    `)
-    deleteSelectedMuseum.run()
 
     for(let museum of museums){
         createNewMuseum.run(museum.name, museum.city)
@@ -132,12 +124,6 @@ function everythingWork(){
     const createNewWork = db.prepare(`
         INSERT INTO works (name, artist, image, museumId) VALUES (@name, @artist, @image, @museumId);
     `)
-    createNewWork.run()
-
-    const deleteSelectedWork = db.prepare(`
-        DELETE FROM works WHERE id = ?;
-    `)
-    deleteSelectedWork.run()
 
     for(let work of works){
         createNewWork.run(work.name, work.artist, work.image, work.museumId)
