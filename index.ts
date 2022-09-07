@@ -158,7 +158,7 @@ app.patch("/works/:id", (req, res) => {
     }
 
     if(errors.length === 0) {
-        if(museumId === museum) {
+        if(museumId) {
             changeMuseumId.run(museumId, id);
             const work = getSelectedWork.get(id);
             work.museum = museum;
