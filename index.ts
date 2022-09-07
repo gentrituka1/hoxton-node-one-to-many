@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 
 const app = express();
-const db = new Database("db.sqlite", { verbose: console.log });
+const db = new Database("./db/setup.db", { verbose: console.log });
 
 app.use(cors());
 app.use(express.json());
@@ -143,6 +143,33 @@ app.post("/works", (req, res) => {
     } else {
         res.status(400).send({ error: errors });
     }
+})
+
+app.patch("/works/:id", (req, res) => {
+    const id = req.params.id;
+    const museumId = req.body.museumId;
+
+    const museum = getSelectedMuseum.get(museumId);
+
+    const errors: string[] = [];
+
+    if(typeof museumId !== "number") {
+        errors.push("The museumId is not provided or is not a number");
+    }
+
+    if(errors.length === 0) {
+        if(museumId === museum) {
+            changeMuseumId.run(museumId, id);
+            const work = getSelectedWork.get(id);
+            work.museum = museum;
+            res.send(work);
+        } else {
+            res.status(400).send({ error: "You are trying to change the museumId of a museum that does not exist. Please make sure that the museum does in fact exist! AUGHHHH!"});
+        }
+    } else{
+        res.status(400).send({ error: errors });
+    }
+
 })
 
 app.listen(port, () => {
